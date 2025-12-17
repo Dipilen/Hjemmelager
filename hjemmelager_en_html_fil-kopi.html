@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hjemmelager</title>
+  <style>
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif; background:#f5f5f5; margin:0; padding:16px; }
+    h1 { margin-bottom:12px; }
+    input, select, button, textarea { width:100%; padding:10px; margin-bottom:10px; font-size:16px; }
+    button { background:black; color:white; border:none; border-radius:6px; }
+    .row { display:flex; gap:8px; }
+    .row button { width:auto; }
+    .item { background:white; padding:12px; border-radius:6px; margin-bottom:10px; }
+    .muted { color:#666; }
+    .tab-buttons { display:flex; gap:8px; margin-bottom:12px; }
+    .tab-buttons button { flex:1; }
+    .hidden { display:none; }
+  </style>
+</head>
+<body>
+<h1>Hjemmelager</h1>
+
+<div class="tab-buttons">
+  <button onclick="showTab('lager')">📦 Lager</button>
+  <button onclick="showTab('innstillinger')">⚙️ Hurtigvalg</button>
+</div>
+
+<div id="lager">
+  <input id="search" placeholder="Søk i lager" />
+
+  <h3>Legg til / rediger vare</h3>
+  <input id="navn" placeholder="Navn vare" />
+
+  <input id="type" placeholder="Type" />
+    <select id="lokasjon"></select>
+    <select id="hylle"></select>
+    <select id="boks"></select>
+
+  <input id="dato" placeholder="Innkjøpsdato" />
+
+  <div class="row">
+    <button onclick="changeAntall(-1)">➖</button>
+    <input id="antall" placeholder="Antall" />
+    <button onclick="changeAntall(1)">➕</button>
+  </div>
+
+  <input id="pris" placeholder="Pris" />
+  <button onclick="addItem()">Lagre vare</button>
+
+  <h3>Lager</h3>
+  <div id="list"></div>
+</div>
+
+<div id="innstillinger" class="hidden">
+  <h3>Hurtigvalg</h3>
+  <p class="muted">Én verdi per linje</p>
+
+  
+
+  <h4>Lokasjon</h4>
+  <textarea id="lokasjonListe" rows="4"></textarea>
+
+  <h4>Hylle</h4>
+  <textarea id="hylleListe" rows="4"></textarea>
+
+  <h4>Boks</h4>
+  <textarea id="boksListe" rows="4"></textarea>
+
+  <button onclick="saveSettings()">Lagre hurtigvalg</button>
+</div>
+
+<script>
+const listEl = document.getElementById('list');
+const searchEl = document.getElementById('search');
+
+const typeInput = document.getElementById('type');
+const lokasjonSelect = document.getElementById('lokasjon');
+const hylleSelect = document.getElementById('hylle');
+const boksSelect = document.getElementById('boks');
+
+
+const lokasjonListe = document.getElementById('lokasjonListe');
+const hylleListe = document.getElementById('hylleListe');
+const boksListe = document.getElementById('boksListe');
+
+let editIndex = null;
+let items = JSON.parse(localStorage.getItem('hjemmelager_items') || '[]');
+
+const defaultSettings = {
+  
+  lokasjon: ['Garasje','Container A','Container B'],
+  hylle: ['1','2','3'],
+  boks: ['A','B','C']
+};
+
+let stored = JSON.parse(localStorage.getItem('hjemmelager_settings') || '{}');
+let settings = {
+  
+  lokasjon: Array.isArray(stored.lokasjon) ? stored.lokasjon : defaultSettings.lokasjon,
+  hylle: Array.isArray(stored.hylle) ? stored.hylle : defaultSettings.hylle,
+  boks: Array.isArray(stored.boks) ? stored.boks : defaultSettings.boks
+};
+
+function showTab(tab) {
+  document.getElementById('lager').classList.add('hidden');
+  document.getElementById('innstillinger').classList.add('hidden');
+  document.getElementById(tab).classList.remove('hidden');
+}
+
+function buildSelect(select, values, label) {
+  select.innerHTML = `<option value="">Velg ${label}</option>`;
+  values.forEach(v => {
+    const o = document.createElement('option');
+    o.value = v;
+    o.textContent = v;
+    select.appendChild(o);
+  });
+}
+
+function rebuildAllSelects() {
+  
+  buildSelect(lokasjonSelect, settings.lokasjon, 'lokasjon');
+  buildSelect(hylleSelect, settings.hylle, 'hylle');
+  buildSelect(boksSelect, settings.boks, 'boks');
+}
+
+function saveSettings() {
+  
+  settings.lokasjon = lokasjonListe.value.split('\n').map(v=>v.trim()).filter(Boolean);
+  settings.hylle = hylleListe.value.split('\n').map(v=>v.trim()).filter(Boolean);
+  settings.boks = boksListe.value.split('\n').map(v=>v.trim()).filter(Boolean);
+
+  localStorage.setItem('hjemmelager_settings', JSON.stringify(settings));
+  rebuildAllSelects();
+  alert('Hurtigvalg lagret');
+  showTab('lager');
+}
+
+function addItem() {
+  const item = {
+    navn: navn.value.trim(),
+    type: typeInput.value,
+    lokasjon: lokasjonSelect.value,
+    hylle: hylleSelect.value,
+    boks: boksSelect.value,
+    dato: dato.value,
+    antall: antall.value,
+    pris: pris.value
+  };
+  if (!item.navn) return alert('Navn må fylles ut');
+
+  if (editIndex !== null) items[editIndex] = item;
+  else items.push(item);
+
+  localStorage.setItem('hjemmelager_items', JSON.stringify(items));
+  render();
+  clearForm();
+}
+
+function clearForm() {
+  navn.value = dato.value = antall.value = pris.value = '';
+  typeInput.value=i.type; lokasjonSelect.value = hylleSelect.value = boksSelect.value = '';
+  editIndex = null;
+}
+
+function render() {
+  const q = searchEl.value.toLowerCase();
+  listEl.innerHTML = '';
+  items.filter(i => Object.values(i).some(v => String(v).toLowerCase().includes(q)))
+    .forEach((i,index)=>{
+      const d=document.createElement('div');
+      d.className='item';
+      d.innerHTML=`<b>${i.navn}</b> <span class="muted">(${i.type||'-'})</span><br>
+      <span class="muted">${i.lokasjon||'-'} – Hylle ${i.hylle||'-'}, Boks ${i.boks||'-'}</span><br>
+      Antall: ${i.antall||'-'} | Pris: ${i.pris||'-'}<br><br>
+      <button onclick="editItem(${index})">Rediger</button>
+      <button onclick="deleteItem(${index})">Slett</button>`;
+      listEl.appendChild(d);
+    });
+}
+
+function editItem(index){
+  const i=items[index];
+  navn.value=i.navn;
+  typeSelect.value=i.type;
+  lokasjonSelect.value=i.lokasjon;
+  hylleSelect.value=i.hylle;
+  boksSelect.value=i.boks;
+  dato.value=i.dato;
+  antall.value=i.antall;
+  pris.value=i.pris;
+  editIndex=index;
+  showTab('lager');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function deleteItem(index){
+  if(!confirm('Slette varen?'))return;
+  items.splice(index,1);
+  localStorage.setItem('hjemmelager_items', JSON.stringify(items));
+  render();
+}
+
+function changeAntall(d){ antall.value=Math.max(0,Number(antall.value||0)+d); }
+
+searchEl.addEventListener('input',render);
+
+// init
+function init(){
+  ('\n');
+  lokasjonListe.value = settings.lokasjon.join('\n');
+  hylleListe.value = settings.hylle.join('\n');
+  boksListe.value = settings.boks.join('\n');
+  rebuildAllSelects();
+  render();
+}
+init();
+</script>
+</body>
+</html>
