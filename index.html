@@ -31,11 +31,11 @@
 
   <h3>Legg til / rediger vare</h3>
   <input id="navn" placeholder="Navn vare" />
-
   <input id="type" placeholder="Type" />
-    <select id="lokasjon"></select>
-    <select id="hylle"></select>
-    <select id="boks"></select>
+
+  <select id="lokasjon"></select>
+  <select id="hylle"></select>
+  <select id="boks"></select>
 
   <input id="dato" placeholder="Innkjøpsdato" />
 
@@ -50,16 +50,15 @@
 
   <h3>Lager</h3>
   <div id="list"></div>
+
   <hr>
-<button onclick="backupData()">📤 Backup</button>
-<button onclick="restoreData()">📥 Gjenopprett</button>
+  <button onclick="backupData()">📤 Backup</button>
+  <button onclick="restoreData()">📥 Gjenopprett</button>
 </div>
 
 <div id="innstillinger" class="hidden">
   <h3>Hurtigvalg</h3>
   <p class="muted">Én verdi per linje</p>
-
-  
 
   <h4>Lokasjon</h4>
   <textarea id="lokasjonListe" rows="4"></textarea>
@@ -77,11 +76,14 @@
 const listEl = document.getElementById('list');
 const searchEl = document.getElementById('search');
 
+const navn = document.getElementById('navn');
 const typeInput = document.getElementById('type');
 const lokasjonSelect = document.getElementById('lokasjon');
 const hylleSelect = document.getElementById('hylle');
 const boksSelect = document.getElementById('boks');
-
+const dato = document.getElementById('dato');
+const antall = document.getElementById('antall');
+const pris = document.getElementById('pris');
 
 const lokasjonListe = document.getElementById('lokasjonListe');
 const hylleListe = document.getElementById('hylleListe');
@@ -91,7 +93,6 @@ let editIndex = null;
 let items = JSON.parse(localStorage.getItem('hjemmelager_items') || '[]');
 
 const defaultSettings = {
-  
   lokasjon: ['Garasje','Container A','Container B'],
   hylle: ['1','2','3'],
   boks: ['A','B','C']
@@ -99,19 +100,18 @@ const defaultSettings = {
 
 let stored = JSON.parse(localStorage.getItem('hjemmelager_settings') || '{}');
 let settings = {
-  
   lokasjon: Array.isArray(stored.lokasjon) ? stored.lokasjon : defaultSettings.lokasjon,
   hylle: Array.isArray(stored.hylle) ? stored.hylle : defaultSettings.hylle,
   boks: Array.isArray(stored.boks) ? stored.boks : defaultSettings.boks
 };
 
-function showTab(tab) {
+function showTab(tab){
   document.getElementById('lager').classList.add('hidden');
   document.getElementById('innstillinger').classList.add('hidden');
   document.getElementById(tab).classList.remove('hidden');
 }
 
-function buildSelect(select, values, label) {
+function buildSelect(select, values, label){
   select.innerHTML = `<option value="">Velg ${label}</option>`;
   values.forEach(v => {
     const o = document.createElement('option');
@@ -121,15 +121,13 @@ function buildSelect(select, values, label) {
   });
 }
 
-function rebuildAllSelects() {
-  
+function rebuildAllSelects(){
   buildSelect(lokasjonSelect, settings.lokasjon, 'lokasjon');
   buildSelect(hylleSelect, settings.hylle, 'hylle');
   buildSelect(boksSelect, settings.boks, 'boks');
 }
 
-function saveSettings() {
-  
+function saveSettings(){
   settings.lokasjon = lokasjonListe.value.split('\n').map(v=>v.trim()).filter(Boolean);
   settings.hylle = hylleListe.value.split('\n').map(v=>v.trim()).filter(Boolean);
   settings.boks = boksListe.value.split('\n').map(v=>v.trim()).filter(Boolean);
@@ -140,7 +138,7 @@ function saveSettings() {
   showTab('lager');
 }
 
-function addItem() {
+function addItem(){
   const item = {
     navn: navn.value.trim(),
     type: typeInput.value,
@@ -151,9 +149,10 @@ function addItem() {
     antall: antall.value,
     pris: pris.value
   };
-  if (!item.navn) return alert('Navn må fylles ut');
 
-  if (editIndex !== null) items[editIndex] = item;
+  if(!item.navn) return alert('Navn må fylles ut');
+
+  if(editIndex !== null) items[editIndex] = item;
   else items.push(item);
 
   localStorage.setItem('hjemmelager_items', JSON.stringify(items));
@@ -161,20 +160,27 @@ function addItem() {
   clearForm();
 }
 
-function clearForm() {
-  navn.value = dato.value = antall.value = pris.value = '';
-  typeInput.value=i.type; lokasjonSelect.value = hylleSelect.value = boksSelect.value = '';
+function clearForm(){
+  navn.value = '';
+  typeInput.value = '';
+  lokasjonSelect.value = '';
+  hylleSelect.value = '';
+  boksSelect.value = '';
+  dato.value = '';
+  antall.value = '';
+  pris.value = '';
   editIndex = null;
 }
 
-function render() {
+function render(){
   const q = searchEl.value.toLowerCase();
   listEl.innerHTML = '';
+
   items.filter(i => Object.values(i).some(v => String(v).toLowerCase().includes(q)))
     .forEach((i,index)=>{
-      const d=document.createElement('div');
-      d.className='item';
-      d.innerHTML=`<b>${i.navn}</b> <span class="muted">(${i.type||'-'})</span><br>
+      const d = document.createElement('div');
+      d.className = 'item';
+      d.innerHTML = `<b>${i.navn}</b> <span class="muted">(${i.type||'-'})</span><br>
       <span class="muted">${i.lokasjon||'-'} – Hylle ${i.hylle||'-'}, Boks ${i.boks||'-'}</span><br>
       Antall: ${i.antall||'-'} | Pris: ${i.pris||'-'}<br><br>
       <button onclick="editItem(${index})">Rediger</button>
@@ -185,90 +191,44 @@ function render() {
 
 function editItem(index){
   const i = items[index];
-  navn.value     = i.navn     || '';
-  type.value     = i.type     || '';
-  lokasjon.value = i.lokasjon || '';
-  hylle.value    = i.hylle    || '';
-  boks.value     = i.boks     || '';
-  dato.value     = i.dato     || '';
-  antall.value   = i.antall   || '';
-  pris.value     = i.pris     || '';
+  navn.value = i.navn || '';
+  typeInput.value = i.type || '';
+  lokasjonSelect.value = i.lokasjon || '';
+  hylleSelect.value = i.hylle || '';
+  boksSelect.value = i.boks || '';
+  dato.value = i.dato || '';
+  antall.value = i.antall || '';
+  pris.value = i.pris || '';
   editIndex = index;
   showTab('lager');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-
 function deleteItem(index){
-  if(!confirm('Slette varen?'))return;
+  if(!confirm('Slette varen?')) return;
   items.splice(index,1);
   localStorage.setItem('hjemmelager_items', JSON.stringify(items));
   render();
 }
 
-function changeAntall(d){ antall.value=Math.max(0,Number(antall.value||0)+d); }
-
-searchEl.addEventListener('input',render);
-
-// init
-function init(){
-  ('\n');
-  lokasjonListe.value = settings.lokasjon.join('\n');
-  hylleListe.value = settings.hylle.join('\n');
-  boksListe.value = settings.boks.join('\n');
-  rebuildAllSelects();
-  render();
+function changeAntall(d){
+  antall.value = Math.max(0, Number(antall.value || 0) + d);
 }
-init();
-  function backupData(){
-  const data = {
-    items: items,
-    settings: settings,
-    version: 1,
-    date: new Date().toISOString()
-  };
 
-  const blob = new Blob(
-    [JSON.stringify(data, null, 2)],
-    { type: 'application/json' }
-  );
+searchEl.addEventListener('input', render);
 
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'hjemmelager-backup.json';
-  a.click();
-  URL.revokeObjectURL(url);
-}
-<script>
 function backupData(){
-  const data = {
-    items: items,
-    settings: settings,
-    version: 1,
-    date: new Date().toISOString()
-  };
+  const data = { items, settings, version:1, date:new Date().toISOString() };
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+  const file = new File([blob], 'hjemmelager-backup.json', {type:'application/json'});
 
-  const blob = new Blob(
-    [JSON.stringify(data, null, 2)],
-    { type: 'application/json' }
-  );
-
-  const file = new File([blob], 'hjemmelager-backup.json', {
-    type: 'application/json'
-  });
-
-  if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    navigator.share({
-      files: [file],
-      title: 'Hjemmelager backup',
-      text: 'Backup av Hjemmelager'
-    });
+  if(navigator.canShare && navigator.canShare({files:[file]})){
+    navigator.share({ files:[file], title:'Hjemmelager backup' });
   } else {
     alert('Deling støttes ikke på denne enheten');
   }
 }
-</script>
+
 function restoreData(){
   const input = document.createElement('input');
   input.type = 'file';
@@ -276,31 +236,21 @@ function restoreData(){
 
   input.onchange = e => {
     const file = e.target.files[0];
-    if (!file) return;
+    if(!file) return;
 
     const reader = new FileReader();
     reader.onload = evt => {
-      try {
+      try{
         const data = JSON.parse(evt.target.result);
-
-        if (!data.items || !data.settings) {
-          alert('Ugyldig backup-fil');
-          return;
-        }
-
-        if (!confirm('Dette vil overskrive eksisterende lager. Fortsette?')) {
-          return;
-        }
+        if(!data.items || !data.settings) return alert('Ugyldig backup-fil');
+        if(!confirm('Dette vil overskrive eksisterende lager. Fortsette?')) return;
 
         items = data.items;
         settings = data.settings;
-
         localStorage.setItem('hjemmelager_items', JSON.stringify(items));
         localStorage.setItem('hjemmelager_settings', JSON.stringify(settings));
-
         rebuildAllSelects();
         render();
-
         alert('Gjenoppretting fullført');
       } catch {
         alert('Kunne ikke lese backup-fil');
@@ -308,9 +258,18 @@ function restoreData(){
     };
     reader.readAsText(file);
   };
-
   input.click();
 }
+
+function init(){
+  lokasjonListe.value = settings.lokasjon.join('\n');
+  hylleListe.value = settings.hylle.join('\n');
+  boksListe.value = settings.boks.join('\n');
+  rebuildAllSelects();
+  render();
+}
+
+init();
 </script>
 </body>
 </html>
