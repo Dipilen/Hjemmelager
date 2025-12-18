@@ -240,7 +240,35 @@ init();
   a.click();
   URL.revokeObjectURL(url);
 }
+<script>
+function backupData(){
+  const data = {
+    items: items,
+    settings: settings,
+    version: 1,
+    date: new Date().toISOString()
+  };
 
+  const blob = new Blob(
+    [JSON.stringify(data, null, 2)],
+    { type: 'application/json' }
+  );
+
+  const file = new File([blob], 'hjemmelager-backup.json', {
+    type: 'application/json'
+  });
+
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    navigator.share({
+      files: [file],
+      title: 'Hjemmelager backup',
+      text: 'Backup av Hjemmelager'
+    });
+  } else {
+    alert('Deling støttes ikke på denne enheten');
+  }
+}
+</script>
 function restoreData(){
   const input = document.createElement('input');
   input.type = 'file';
