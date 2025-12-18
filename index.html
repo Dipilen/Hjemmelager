@@ -50,6 +50,9 @@
 
   <h3>Lager</h3>
   <div id="list"></div>
+  <hr>
+<button onclick="backupData()">📤 Backup</button>
+<button onclick="restoreData()">📥 Gjenopprett</button>
 </div>
 
 <div id="innstillinger" class="hidden">
@@ -217,6 +220,69 @@ function init(){
   render();
 }
 init();
+  function backupData(){
+  const data = {
+    items: items,
+    settings: settings,
+    version: 1,
+    date: new Date().toISOString()
+  };
+
+  const blob = new Blob(
+    [JSON.stringify(data, null, 2)],
+    { type: 'application/json' }
+  );
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'hjemmelager-backup.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function restoreData(){
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'application/json';
+
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = evt => {
+      try {
+        const data = JSON.parse(evt.target.result);
+
+        if (!data.items || !data.settings) {
+          alert('Ugyldig backup-fil');
+          return;
+        }
+
+        if (!confirm('Dette vil overskrive eksisterende lager. Fortsette?')) {
+          return;
+        }
+
+        items = data.items;
+        settings = data.settings;
+
+        localStorage.setItem('hjemmelager_items', JSON.stringify(items));
+        localStorage.setItem('hjemmelager_settings', JSON.stringify(settings));
+
+        rebuildAllSelects();
+        render();
+
+        alert('Gjenoppretting fullført');
+      } catch {
+        alert('Kunne ikke lese backup-fil');
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  input.click();
+}
 </script>
 </body>
 </html>
