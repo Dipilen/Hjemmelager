@@ -181,19 +181,20 @@ function render() {
 }
 
 function editItem(index){
-  const i=items[index];
-  navn.value=i.navn;
-  typeSelect.value=i.type;
-  lokasjonSelect.value=i.lokasjon;
-  hylleSelect.value=i.hylle;
-  boksSelect.value=i.boks;
-  dato.value=i.dato;
-  antall.value=i.antall;
-  pris.value=i.pris;
-  editIndex=index;
+  const i = items[index];
+  navn.value     = i.navn     || '';
+  type.value     = i.type     || '';
+  lokasjon.value = i.lokasjon || '';
+  hylle.value    = i.hylle    || '';
+  boks.value     = i.boks     || '';
+  dato.value     = i.dato     || '';
+  antall.value   = i.antall   || '';
+  pris.value     = i.pris     || '';
+  editIndex = index;
   showTab('lager');
-  window.scrollTo({top:0,behavior:'smooth'});
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
 
 function deleteItem(index){
   if(!confirm('Slette varen?'))return;
