@@ -221,13 +221,32 @@ h2.page-title { font-size:22px; margin:8px 0 17px; }
 const ITEMS_KEY = 'hjemmelager_items';
 const SETTINGS_KEY = 'hjemmelager_settings';
 
-let items = loadItems();
-let settings = loadSettings();
-let currentImage = '';
+function createId() {
+    if (window.crypto && crypto.randomUUID) {
+        return crypto.randomUUID();
+    }
+    return 'vare-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+}
 
+/* Henter varer og gir gamle varer som mangler ID en ny ID */
 function loadItems() {
     try {
-        return JSON.parse(localStorage.getItem(ITEMS_KEY)) || [];
+        const saved = JSON.parse(localStorage.getItem(ITEMS_KEY)) || [];
+        let changed = false;
+
+        const loaded = saved.map(item => {
+            if (!item.id) {
+                changed = true;
+                return { ...item, id: createId() };
+            }
+            return item;
+        });
+
+        if (changed) {
+            localStorage.setItem(ITEMS_KEY, JSON.stringify(loaded));
+        }
+
+        return loaded;
     } catch {
         return [];
     }
@@ -250,6 +269,10 @@ function loadSettings() {
         };
     }
 }
+
+let items = loadItems();
+let settings = loadSettings();
+let currentImage = '';
 
 function saveAll() {
     localStorage.setItem(ITEMS_KEY, JSON.stringify(items));
@@ -310,8 +333,8 @@ function renderItems() {
                     ${item.pris ? ' · ' + formatPrice(item.pris) : ''}
                 </p>
                 <div class="actions">
-                    <button class="small-btn" onclick="editItem('${item.id}')">Rediger</button>
-                    <button class="small-btn delete-btn" onclick="deleteItem('${item.id}')">Slett</button>
+                    <button class="small-btn" onclick="editItem('${escapeHTML(item.id)}')">Rediger</button>
+                    <button class="small-btn delete-btn" onclick="deleteItem('${escapeHTML(item.id)}')">Slett</button>
                 </div>
             </div>
         </div>
@@ -320,13 +343,18 @@ function renderItems() {
 
 function escapeHTML(value) {
     return String(value ?? '').replace(/[&<>"']/g, char => ({
-        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+        '&':'&amp;',
+        '<':'&lt;',
+        '>':'&gt;',
+        '"':'&quot;',
+        "'":'&#039;'
     })[char]);
 }
 
 function formatPrice(value) {
     return Number(value).toLocaleString('no-NO', {
-        style:'currency', currency:'NOK'
+        style:'currency',
+        currency:'NOK'
     });
 }
 
@@ -371,10 +399,15 @@ function clearForm() {
 }
 
 function editItem(id) {
-    const item = items.find(x => x.id === id);
-    if (!item) return;
+    const item = items.find(x => String(x.id) === String(id));
+
+    if (!item) {
+        alert('Fant ikke varen. Oppdater siden og prøv igjen.');
+        return;
+    }
 
     clearForm();
+
     document.getElementById('formTitle').textContent = 'Rediger ting';
     document.getElementById('editId').value = item.id;
     document.getElementById('navn').value = item.navn || '';
@@ -456,7 +489,7 @@ function saveItem() {
     const id = document.getElementById('editId').value;
 
     const item = {
-        id:id || crypto.randomUUID(),
+        id: id || createId(),
         navn,
         type:document.getElementById('type').value.trim(),
         lokasjon:document.getElementById('lokasjon').value,
@@ -470,14 +503,21 @@ function saveItem() {
     };
 
     if (id) {
-        const index = items.findIndex(x => x.id === id);
-        if (index !== -1) items[index] = item;
+        const index = items.findIndex(x => String(x.id) === String(id));
+
+        if (index === -1) {
+            alert('Fant ikke varen som skulle redigeres.');
+            return;
+        }
+
+        items[index] = item;
     } else {
         items.unshift(item);
     }
 
     try {
         saveAll();
+        clearForm();
         showTab('lager');
     } catch {
         alert('Kunne ikke lagre. Lageret kan være fullt. Prøv å fjerne noen bilder.');
@@ -485,11 +525,23 @@ function saveItem() {
 }
 
 function deleteItem(id) {
+    const index = items.findIndex(item => String(item.id) === String(id));
+
+    if (index === -1) {
+        alert('Fant ikke varen som skulle slettes.');
+        return;
+    }
+
     if (!confirm('Vil du slette denne tingen?')) return;
 
-    items = items.filter(item => item.id !== id);
-    saveAll();
-    renderItems();
+    items.splice(index, 1);
+
+    try {
+        saveAll();
+        renderItems();
+    } catch {
+        alert('Kunne ikke lagre endringen.');
+    }
 }
 
 function renderSettings() {
@@ -586,15 +638,20 @@ function restoreData() {
             try {
                 const data = JSON.parse(evt.target.result);
 
-                if (!data.items || !data.settings) {
-                    return alert('Ugyldig backup-fil');
+                if (!Array.isArray(data.items) || !data.settings) {
+                    alert('Ugyldig backup-fil');
+                    return;
                 }
 
                 if (!confirm('Dette vil overskrive eksisterende lager. Fortsette?')) return;
 
-                items = data.items;
+                items = data.items.map(item => ({
+                    ...item,
+                    id: item.id || createId()
+                }));
 
                 const saved = data.settings;
+
                 settings = {
                     lokasjoner:saved.lokasjoner || saved.lokasjon || [],
                     hyller:saved.hyller || saved.hylle || [],
