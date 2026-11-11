@@ -9,263 +9,95 @@
 
 <style>
 :root {
-    --bg: #f5f6f8;
-    --card: #ffffff;
-    --text: #202631;
-    --muted: #77808d;
-    --accent: #3867e8;
-    --border: #e5e8ee;
-    --danger: #d94b4b;
+    --bg:#f5f6f8;
+    --card:#fff;
+    --text:#202631;
+    --muted:#77808d;
+    --accent:#3867e8;
+    --border:#e5e8ee;
+    --danger:#d94b4b;
 }
-
-* {
-    box-sizing: border-box;
-}
-
+* { box-sizing:border-box; }
 body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    padding-bottom: 100px;
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    padding-bottom:100px;
 }
-
-header {
-    padding: 25px 20px 12px;
-}
-
-header h1 {
-    margin: 0;
-    font-size: 28px;
-    font-weight: 750;
-}
-
-header p {
-    color: var(--muted);
-    margin: 6px 0 0;
-    font-size: 14px;
-}
-
-main {
-    padding: 12px 16px;
-    max-width: 700px;
-    margin: auto;
-}
-
+header { padding:25px 20px 12px; }
+header h1 { margin:0; font-size:28px; font-weight:750; }
+header p { color:var(--muted); margin:6px 0 0; font-size:14px; }
+main { padding:12px 16px; max-width:700px; margin:auto; }
 .search {
-    width: 100%;
-    padding: 15px;
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    font-size: 16px;
-    background: white;
-    margin-bottom: 14px;
+    width:100%; padding:15px; border:1px solid var(--border);
+    border-radius:14px; font-size:16px; background:white; margin-bottom:14px;
 }
-
 .primary {
-    width: 100%;
-    border: 0;
-    border-radius: 13px;
-    background: var(--accent);
-    color: white;
-    padding: 15px;
-    font-size: 16px;
-    font-weight: 650;
-    cursor: pointer;
-    margin-bottom: 16px;
+    width:100%; border:0; border-radius:13px; background:var(--accent);
+    color:white; padding:15px; font-size:16px; font-weight:650;
+    cursor:pointer; margin-bottom:16px;
 }
-
 .item {
-    background: var(--card);
-    border-radius: 16px;
-    padding: 14px;
-    margin-bottom: 12px;
-    display: flex;
-    gap: 13px;
-    border: 1px solid var(--border);
+    background:var(--card); border-radius:16px; padding:14px;
+    margin-bottom:12px; display:flex; gap:13px; border:1px solid var(--border);
 }
-
 .item img {
-    width: 86px;
-    height: 86px;
-    object-fit: cover;
-    border-radius: 11px;
-    background: var(--bg);
+    width:86px; height:86px; object-fit:cover;
+    border-radius:11px; background:var(--bg);
 }
-
-.item-content {
-    flex: 1;
-    min-width: 0;
-}
-
-.item h3 {
-    margin: 2px 0 6px;
-    font-size: 17px;
-}
-
+.item-content { flex:1; min-width:0; }
+.item h3 { margin:2px 0 6px; font-size:17px; }
 .item p {
-    color: var(--muted);
-    font-size: 13px;
-    margin: 3px 0;
-    overflow-wrap: anywhere;
+    color:var(--muted); font-size:13px; margin:3px 0; overflow-wrap:anywhere;
 }
-
-.actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 9px;
-}
-
+.actions { display:flex; gap:8px; margin-top:9px; }
 .small-btn {
-    border: 0;
-    padding: 8px 12px;
-    border-radius: 9px;
-    background: #edf1fa;
-    color: var(--accent);
-    font-weight: 600;
-    cursor: pointer;
+    border:0; padding:8px 12px; border-radius:9px;
+    background:#edf1fa; color:var(--accent); font-weight:600; cursor:pointer;
 }
-
-.delete-btn {
-    background: #fff0f0;
-    color: var(--danger);
+.delete-btn { background:#fff0f0; color:var(--danger); }
+.section { display:none; }
+.section.active { display:block; }
+.form-card,.settings-card {
+    background:white; border:1px solid var(--border);
+    border-radius:16px; padding:17px; margin-bottom:15px;
 }
-
-.section {
-    display: none;
+.form-card h2,.settings-card h2 { margin:0 0 15px; }
+label { display:block; font-size:13px; font-weight:650; margin:13px 0 6px; }
+input,select,textarea {
+    width:100%; border:1px solid var(--border); border-radius:10px;
+    padding:12px; font-size:16px; background:white; color:var(--text);
 }
-
-.section.active {
-    display: block;
-}
-
-.form-card, .settings-card {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 17px;
-    margin-bottom: 15px;
-}
-
-.form-card h2, .settings-card h2 {
-    margin: 0 0 15px;
-}
-
-label {
-    display: block;
-    font-size: 13px;
-    font-weight: 650;
-    margin: 13px 0 6px;
-}
-
-input, select, textarea {
-    width: 100%;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px;
-    font-size: 16px;
-    background: white;
-    color: var(--text);
-}
-
-textarea {
-    min-height: 75px;
-    resize: vertical;
-}
-
-.form-buttons {
-    display: flex;
-    gap: 10px;
-    margin-top: 18px;
-}
-
-.form-buttons button {
-    flex: 1;
-    margin: 0;
-}
-
-.secondary {
-    background: #e9edf4;
-    color: var(--text);
-}
-
-.setting-row {
-    display: flex;
-    gap: 8px;
-    margin: 10px 0;
-}
-
-.setting-row input {
-    flex: 1;
-}
-
+textarea { min-height:75px; resize:vertical; }
+.form-buttons { display:flex; gap:10px; margin-top:18px; }
+.form-buttons button { flex:1; margin:0; }
+.secondary { background:#e9edf4; color:var(--text); }
+.setting-row { display:flex; gap:8px; margin:10px 0; }
+.setting-row input { flex:1; }
 .setting-row button {
-    border: 0;
-    border-radius: 9px;
-    padding: 0 13px;
-    background: #fff0f0;
-    color: var(--danger);
-    font-weight: 600;
+    border:0; border-radius:9px; padding:0 13px;
+    background:#fff0f0; color:var(--danger); font-weight:600;
 }
-
-.empty {
-    text-align: center;
-    padding: 35px 15px;
-    color: var(--muted);
-}
-
+.empty { text-align:center; padding:35px 15px; color:var(--muted); }
 nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    background: rgba(255,255,255,.97);
-    border-top: 1px solid var(--border);
-    padding: 9px 5px calc(9px + env(safe-area-inset-bottom));
-    z-index: 10;
+    position:fixed; bottom:0; left:0; right:0;
+    display:grid; grid-template-columns:repeat(4,1fr);
+    background:rgba(255,255,255,.97); border-top:1px solid var(--border);
+    padding:9px 5px calc(9px + env(safe-area-inset-bottom)); z-index:10;
 }
-
 nav button {
-    border: 0;
-    background: transparent;
-    color: var(--muted);
-    font-size: 12px;
-    font-weight: 600;
-    padding: 7px 2px;
-    cursor: pointer;
+    border:0; background:transparent; color:var(--muted);
+    font-size:12px; font-weight:600; padding:7px 2px; cursor:pointer;
 }
-
-nav button span {
-    display: block;
-    font-size: 21px;
-    margin-bottom: 3px;
-}
-
-nav button.active {
-    color: var(--accent);
-}
-
-h2.page-title {
-    font-size: 22px;
-    margin: 8px 0 17px;
-}
-
+nav button span { display:block; font-size:21px; margin-bottom:3px; }
+nav button.active { color:var(--accent); }
+h2.page-title { font-size:22px; margin:8px 0 17px; }
 #imagePreview {
-    display: none;
-    width: 110px;
-    height: 110px;
-    object-fit: cover;
-    border-radius: 12px;
-    margin-top: 10px;
+    display:none; width:110px; height:110px;
+    object-fit:cover; border-radius:12px; margin-top:10px;
 }
-
-.info {
-    color: var(--muted);
-    font-size: 13px;
-    line-height: 1.5;
-}
+.info { color:var(--muted); font-size:13px; line-height:1.5; }
 </style>
 </head>
 
@@ -278,124 +110,108 @@ h2.page-title {
 
 <main>
 
-    <!-- LAGER -->
-    <section id="lager" class="section active">
-        <input
-            class="search"
-            id="searchInput"
-            type="search"
-            placeholder="Søk etter ting..."
-            oninput="renderItems()"
-        >
+<section id="lager" class="section active">
+    <input class="search" id="searchInput" type="search"
+           placeholder="Søk etter ting..." oninput="renderItems()">
 
-        <button class="primary" onclick="newItem()">
-            + Legg til ny ting
-        </button>
+    <button class="primary" onclick="newItem()">+ Legg til ny ting</button>
+    <div id="itemList"></div>
+</section>
 
-        <div id="itemList"></div>
-    </section>
+<section id="innstillinger" class="section">
+    <h2 class="page-title">Innstillinger</h2>
 
-    <!-- INNSTILLINGER -->
-    <section id="innstillinger" class="section">
-        <h2 class="page-title">Innstillinger</h2>
-
-        <div class="settings-card">
-            <h2>Lokasjoner</h2>
-            <div id="locationSettings"></div>
-            <div class="setting-row">
-                <input id="newLocation" placeholder="Ny lokasjon">
-                <button onclick="addSetting('lokasjoner','newLocation')">Legg til</button>
-            </div>
+    <div class="settings-card">
+        <h2>Lokasjoner</h2>
+        <div id="locationSettings"></div>
+        <div class="setting-row">
+            <input id="newLocation" placeholder="Ny lokasjon">
+            <button onclick="addSetting('lokasjoner','newLocation')">Legg til</button>
         </div>
+    </div>
 
-        <div class="settings-card">
-            <h2>Hyller</h2>
-            <div id="shelfSettings"></div>
-            <div class="setting-row">
-                <input id="newShelf" placeholder="Ny hylle">
-                <button onclick="addSetting('hyller','newShelf')">Legg til</button>
-            </div>
+    <div class="settings-card">
+        <h2>Hyller</h2>
+        <div id="shelfSettings"></div>
+        <div class="setting-row">
+            <input id="newShelf" placeholder="Ny hylle">
+            <button onclick="addSetting('hyller','newShelf')">Legg til</button>
         </div>
+    </div>
 
-        <div class="settings-card">
-            <h2>Bokser</h2>
-            <div id="boxSettings"></div>
-            <div class="setting-row">
-                <input id="newBox" placeholder="Ny boks">
-                <button onclick="addSetting('bokser','newBox')">Legg til</button>
-            </div>
+    <div class="settings-card">
+        <h2>Bokser</h2>
+        <div id="boxSettings"></div>
+        <div class="setting-row">
+            <input id="newBox" placeholder="Ny boks">
+            <button onclick="addSetting('bokser','newBox')">Legg til</button>
         </div>
+    </div>
 
-        <div class="settings-card">
-            <h2>Lagring</h2>
-            <p class="info">
-                Lageret lagres lokalt i nettleseren på denne enheten.
-                Ta regelmessig backup til iCloud Drive for å sikre dataene.
-            </p>
+    <div class="settings-card">
+        <h2>Lagring</h2>
+        <p class="info">
+            Lageret lagres lokalt i nettleseren. Ta regelmessig backup
+            til iCloud Drive for å sikre dataene dine.
+        </p>
+    </div>
+</section>
+
+<section id="rediger" class="section">
+    <div class="form-card">
+        <h2 id="formTitle">Legg til ting</h2>
+        <input type="hidden" id="editId">
+
+        <label for="navn">Navn</label>
+        <input id="navn" placeholder="Hva heter tingen?">
+
+        <label for="type">Kategori</label>
+        <input id="type" placeholder="F.eks. Verktøy, kjøkken, klær">
+
+        <label for="lokasjon">Lokasjon</label>
+        <select id="lokasjon"></select>
+
+        <label for="hylle">Hylle</label>
+        <select id="hylle"></select>
+
+        <label for="boks">Boks</label>
+        <select id="boks"></select>
+
+        <label for="antall">Antall</label>
+        <input id="antall" type="number" min="0" value="1">
+
+        <label for="pris">Pris per stykk (kr)</label>
+        <input id="pris" type="number" min="0" step="0.01" placeholder="0">
+
+        <label for="dato">Dato</label>
+        <input id="dato" type="date">
+
+        <label for="notat">Notat</label>
+        <textarea id="notat" placeholder="Valgfri informasjon"></textarea>
+
+        <label for="bilde">Bilde</label>
+        <input id="bilde" type="file" accept="image/*" onchange="previewImage(event)">
+        <img id="imagePreview" alt="Forhåndsvisning">
+
+        <div class="form-buttons">
+            <button class="primary" onclick="saveItem()">Lagre</button>
+            <button class="primary secondary" onclick="showTab('lager')">Avbryt</button>
         </div>
-    </section>
-
-    <!-- REGISTRERING -->
-    <section id="rediger" class="section">
-        <div class="form-card">
-            <h2 id="formTitle">Legg til ting</h2>
-
-            <input type="hidden" id="editId">
-
-            <label for="navn">Navn</label>
-            <input id="navn" placeholder="Hva heter tingen?">
-
-            <label for="type">Kategori</label>
-            <input id="type" placeholder="F.eks. Verktøy, kjøkken, klær">
-
-            <label for="lokasjon">Lokasjon</label>
-            <select id="lokasjon"></select>
-
-            <label for="hylle">Hylle</label>
-            <select id="hylle"></select>
-
-            <label for="boks">Boks</label>
-            <select id="boks"></select>
-
-            <label for="antall">Antall</label>
-            <input id="antall" type="number" min="0" value="1">
-
-            <label for="pris">Pris per stykk (kr)</label>
-            <input id="pris" type="number" min="0" step="0.01" placeholder="0">
-
-            <label for="dato">Dato</label>
-            <input id="dato" type="date">
-
-            <label for="notat">Notat</label>
-            <textarea id="notat" placeholder="Valgfri informasjon"></textarea>
-
-            <label for="bilde">Bilde</label>
-            <input id="bilde" type="file" accept="image/*" onchange="previewImage(event)">
-            <img id="imagePreview" alt="Forhåndsvisning">
-
-            <div class="form-buttons">
-                <button class="primary" onclick="saveItem()">Lagre</button>
-                <button class="primary secondary" onclick="showTab('lager')">Avbryt</button>
-            </div>
-        </div>
-    </section>
+    </div>
+</section>
 
 </main>
 
-<!-- FAST BUNNMENY -->
 <nav>
     <button id="nav-lager" class="active" onclick="showTab('lager')">
         <span>📦</span>Lager
     </button>
-
     <button id="nav-innstillinger" onclick="showTab('innstillinger')">
         <span>⚙️</span>Innstillinger
     </button>
-
     <button onclick="backupData()">
         <span>☁️</span>Backup
     </button>
-
     <button onclick="restoreData()">
         <span>📥</span>Gjenopprett
     </button>
@@ -419,14 +235,19 @@ function loadItems() {
 
 function loadSettings() {
     try {
-        const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY));
+        const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {};
+
         return {
-            lokasjoner: saved?.lokasjoner || [],
-            hyller: saved?.hyller || [],
-            bokser: saved?.bokser || []
+            lokasjoner: saved.lokasjoner || saved.lokasjon || ['Garasje','Container A','Container B'],
+            hyller: saved.hyller || saved.hylle || ['1','2','3'],
+            bokser: saved.bokser || saved.boks || ['A','B','C']
         };
     } catch {
-        return { lokasjoner: [], hyller: [], bokser: [] };
+        return {
+            lokasjoner:['Garasje','Container A','Container B'],
+            hyller:['1','2','3'],
+            bokser:['A','B','C']
+        };
     }
 }
 
@@ -460,14 +281,14 @@ function renderItems() {
 
     const filtered = items.filter(item => {
         const searchable = [
-            item.navn, item.type, item.lokasjon,
-            item.hylle, item.boks, item.notat
+            item.navn,item.type,item.lokasjon,
+            item.hylle,item.boks,item.notat
         ].join(' ').toLowerCase();
 
         return searchable.includes(query);
     });
 
-    if (filtered.length === 0) {
+    if (!filtered.length) {
         list.innerHTML = '<div class="empty">Ingen ting funnet.</div>';
         return;
     }
@@ -476,7 +297,7 @@ function renderItems() {
         <div class="item">
             ${item.bilde
                 ? `<img src="${item.bilde}" alt="">`
-                : `<img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100%25' height='100%25' fill='%23edf0f5'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' font-size='35' fill='%2399a2af'%3E%3F%3C/text%3E%3C/svg%3E" alt="">`
+                : `<img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100%25' height='100%25' fill='%23edf0f5'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' font-size='35' fill='%2399a2af'%3E?%3C/text%3E%3C/svg%3E" alt="">`
             }
             <div class="item-content">
                 <h3>${escapeHTML(item.navn)}</h3>
@@ -499,18 +320,13 @@ function renderItems() {
 
 function escapeHTML(value) {
     return String(value ?? '').replace(/[&<>"']/g, char => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
     })[char]);
 }
 
 function formatPrice(value) {
     return Number(value).toLocaleString('no-NO', {
-        style: 'currency',
-        currency: 'NOK'
+        style:'currency', currency:'NOK'
     });
 }
 
@@ -526,6 +342,12 @@ function fillSelect(id, values, selected = '') {
     });
 
     select.value = selected;
+}
+
+function fillFormSelects(item = {}) {
+    fillSelect('lokasjon', settings.lokasjoner, item.lokasjon || '');
+    fillSelect('hylle', settings.hyller, item.hylle || '');
+    fillSelect('boks', settings.bokser, item.boks || '');
 }
 
 function newItem() {
@@ -548,12 +370,6 @@ function clearForm() {
     currentImage = '';
 }
 
-function fillFormSelects(item = {}) {
-    fillSelect('lokasjon', settings.lokasjoner, item.lokasjon || '');
-    fillSelect('hylle', settings.hyller, item.hylle || '');
-    fillSelect('boks', settings.bokser, item.boks || '');
-}
-
 function editItem(id) {
     const item = items.find(x => x.id === id);
     if (!item) return;
@@ -569,6 +385,7 @@ function editItem(id) {
     document.getElementById('notat').value = item.notat || '';
 
     currentImage = item.bilde || '';
+
     if (currentImage) {
         const preview = document.getElementById('imagePreview');
         preview.src = currentImage;
@@ -594,7 +411,7 @@ async function previewImage(event) {
 }
 
 function compressImage(file) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve,reject) => {
         const reader = new FileReader();
 
         reader.onload = event => {
@@ -606,7 +423,7 @@ function compressImage(file) {
                 let height = img.height;
 
                 if (width > maxSize || height > maxSize) {
-                    const scale = Math.min(maxSize / width, maxSize / height);
+                    const scale = Math.min(maxSize / width,maxSize / height);
                     width *= scale;
                     height *= scale;
                 }
@@ -615,10 +432,8 @@ function compressImage(file) {
                 canvas.width = width;
                 canvas.height = height;
 
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
-
-                resolve(canvas.toDataURL('image/jpeg', 0.75));
+                canvas.getContext('2d').drawImage(img,0,0,width,height);
+                resolve(canvas.toDataURL('image/jpeg',0.75));
             };
 
             img.onerror = reject;
@@ -641,17 +456,17 @@ function saveItem() {
     const id = document.getElementById('editId').value;
 
     const item = {
-        id: id || crypto.randomUUID(),
+        id:id || crypto.randomUUID(),
         navn,
-        type: document.getElementById('type').value.trim(),
-        lokasjon: document.getElementById('lokasjon').value,
-        hylle: document.getElementById('hylle').value,
-        boks: document.getElementById('boks').value,
-        antall: Number(document.getElementById('antall').value) || 0,
-        pris: Number(document.getElementById('pris').value) || 0,
-        dato: document.getElementById('dato').value,
-        notat: document.getElementById('notat').value.trim(),
-        bilde: currentImage
+        type:document.getElementById('type').value.trim(),
+        lokasjon:document.getElementById('lokasjon').value,
+        hylle:document.getElementById('hylle').value,
+        boks:document.getElementById('boks').value,
+        antall:Number(document.getElementById('antall').value) || 0,
+        pris:Number(document.getElementById('pris').value) || 0,
+        dato:document.getElementById('dato').value,
+        notat:document.getElementById('notat').value.trim(),
+        bilde:currentImage
     };
 
     if (id) {
@@ -664,7 +479,7 @@ function saveItem() {
     try {
         saveAll();
         showTab('lager');
-    } catch (error) {
+    } catch {
         alert('Kunne ikke lagre. Lageret kan være fullt. Prøv å fjerne noen bilder.');
     }
 }
@@ -678,12 +493,12 @@ function deleteItem(id) {
 }
 
 function renderSettings() {
-    renderSettingList('lokasjoner', 'locationSettings');
-    renderSettingList('hyller', 'shelfSettings');
-    renderSettingList('bokser', 'boxSettings');
+    renderSettingList('lokasjoner','locationSettings');
+    renderSettingList('hyller','shelfSettings');
+    renderSettingList('bokser','boxSettings');
 }
 
-function renderSettingList(key, elementId) {
+function renderSettingList(key,elementId) {
     const container = document.getElementById(elementId);
 
     if (!settings[key].length) {
@@ -691,15 +506,15 @@ function renderSettingList(key, elementId) {
         return;
     }
 
-    container.innerHTML = settings[key].map((value, index) => `
+    container.innerHTML = settings[key].map((value,index) => `
         <div class="setting-row">
             <input value="${escapeHTML(value)}" readonly>
-            <button onclick="removeSetting('${key}', ${index})">Slett</button>
+            <button onclick="removeSetting('${key}',${index})">Slett</button>
         </div>
     `).join('');
 }
 
-function addSetting(key, inputId) {
+function addSetting(key,inputId) {
     const input = document.getElementById(inputId);
     const value = input.value.trim();
 
@@ -714,119 +529,93 @@ function addSetting(key, inputId) {
     renderSettings();
 }
 
-function removeSetting(key, index) {
+function removeSetting(key,index) {
     const value = settings[key][index];
 
     if (!confirm('Slette "' + value + '" fra innstillingene?')) return;
 
-    settings[key].splice(index, 1);
+    settings[key].splice(index,1);
     saveAll();
     renderSettings();
 }
 
-/* BACKUP:
-   På iPhone/iPad åpnes Apples delingsmeny.
-   Velg Arkiver i Filer og deretter iCloud Drive.
-*/
+/* BACKUP – SAMME METODE SOM I DEN GAMLE KODEN */
 async function backupData() {
-    const data = {
-        version: 1,
-        items: items,
-        settings: settings,
-        backupDate: new Date().toISOString()
-    };
+    const data = { items, settings };
 
-    const json = JSON.stringify(data, null, 2);
-    const date = new Date().toISOString().slice(0, 10);
+    const blob = new Blob(
+        [JSON.stringify(data,null,2)],
+        { type:'application/json' }
+    );
 
     const file = new File(
-        [json],
-        'Hjemmelager-backup-' + date + '.json',
-        { type: 'application/json' }
+        [blob],
+        `backup-${new Date().toISOString().replace(/:/g,'-')}.json`,
+        { type:'application/json' }
     );
 
-    if (
-        navigator.share &&
-        navigator.canShare &&
-        navigator.canShare({ files: [file] })
-    ) {
+    if (navigator.canShare && navigator.canShare({files:[file]})) {
         try {
             await navigator.share({
-                files: [file],
-                title: 'Hjemmelager backup'
+                files:[file],
+                title:'Hjemmelager Backup'
             });
-            return;
         } catch (error) {
-            if (error.name === 'AbortError') return;
-            console.error('Deling feilet:', error);
+            if (error.name !== 'AbortError') {
+                alert('Kunne ikke åpne delingsmenyen.');
+            }
         }
+    } else {
+        alert('Backup fungerer best på iOS med delingsfunksjon. Bruk PC/Mac for full nedlasting.');
     }
-
-    // Reserve dersom delingsmenyen ikke støttes
-    const url = URL.createObjectURL(file);
-    const link = document.createElement('a');
-
-    link.href = url;
-    link.download = file.name;
-
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-
-    setTimeout(() => URL.revokeObjectURL(url), 1500);
-
-    alert(
-        'Backup er klargjort for nedlasting. ' +
-        'Hvis du får spørsmål om lagringssted, velg iCloud Drive.'
-    );
 }
 
-/* GJENOPPRETT BACKUP */
+/* GJENOPPRETT */
 function restoreData() {
-    const picker = document.createElement('input');
-    picker.type = 'file';
-    picker.accept = '.json,application/json';
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'application/json';
 
-    picker.onchange = async () => {
-        const file = picker.files[0];
+    input.onchange = event => {
+        const file = event.target.files[0];
         if (!file) return;
 
-        try {
-            const text = await file.text();
-            const data = JSON.parse(text);
+        const reader = new FileReader();
 
-            if (!Array.isArray(data.items) || !data.settings) {
-                throw new Error('Ugyldig backupfil');
+        reader.onload = evt => {
+            try {
+                const data = JSON.parse(evt.target.result);
+
+                if (!data.items || !data.settings) {
+                    return alert('Ugyldig backup-fil');
+                }
+
+                if (!confirm('Dette vil overskrive eksisterende lager. Fortsette?')) return;
+
+                items = data.items;
+
+                const saved = data.settings;
+                settings = {
+                    lokasjoner:saved.lokasjoner || saved.lokasjon || [],
+                    hyller:saved.hyller || saved.hylle || [],
+                    bokser:saved.bokser || saved.boks || []
+                };
+
+                saveAll();
+                renderSettings();
+                renderItems();
+                alert('Gjenoppretting fullført');
+                showTab('lager');
+
+            } catch {
+                alert('Kunne ikke lese backup-fil');
             }
+        };
 
-            if (!confirm(
-                'Gjenopprette backup?\n\n' +
-                'Dette erstatter lageret som ligger på denne enheten.'
-            )) return;
-
-            items = data.items;
-
-            settings = {
-                lokasjoner: Array.isArray(data.settings.lokasjoner)
-                    ? data.settings.lokasjoner : [],
-                hyller: Array.isArray(data.settings.hyller)
-                    ? data.settings.hyller : [],
-                bokser: Array.isArray(data.settings.bokser)
-                    ? data.settings.bokser : []
-            };
-
-            saveAll();
-            renderItems();
-
-            alert('Backup er gjenopprettet.');
-            showTab('lager');
-
-        } catch (error) {
-            alert('Kunne ikke gjenopprette. Kontroller at du har valgt en gyldig Hjemmelager-backup.');
-        }
+        reader.readAsText(file);
     };
 
-    picker.click();
+    input.click();
 }
 
 // Start appen
@@ -836,4 +625,3 @@ renderSettings();
 
 </body>
 </html>
-
