@@ -1,275 +1,441 @@
+
 <!DOCTYPE html>
 <html lang="no">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hjemmelager</title>
-  <style>
-    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif; background:#f5f5f5; margin:0; padding:16px; }
-    h1 { margin-bottom:12px; }
-    input, select, button, textarea { width:100%; padding:10px; margin-bottom:10px; font-size:16px; }
-    button { background:black; color:white; border:none; border-radius:6px; }
-    .row { display:flex; gap:8px; }
-    .row button { width:auto; }
-    .item { background:white; padding:12px; border-radius:6px; margin-bottom:10px; }
-    .muted { color:#666; }
-    .tab-buttons { display:flex; gap:8px; margin-bottom:12px; }
-    .tab-buttons button { flex:1; }
-    .hidden { display:none; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mitt lager</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f4f7f5;color:#203128;font-family:system-ui,Arial,sans-serif}
+.app{max-width:760px;margin:auto;padding:22px 15px 100px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+h1{font-size:30px;margin:0;letter-spacing:-1px}
+h2{font-size:18px;margin:0 0 16px}
+.subtitle,.muted{color:#819087;font-size:13px}
+.logo{background:#e1f1e7;padding:13px;border-radius:15px;font-size:24px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+.stat,.panel,.item{background:white;border:1px solid #e7ece8;border-radius:17px}
+.stat{padding:16px}
+.stat span{display:block;color:#819087;font-size:12px}
+.stat strong{display:block;font-size:24px;margin-top:6px}
+.panel{padding:17px;margin-bottom:15px}
+label{font-size:12px;font-weight:650;color:#65736a}
+input,select,textarea{width:100%;padding:12px;border:1px solid #e0e7e2;border-radius:11px;background:#fbfcfb;font:inherit;outline:none}
+input:focus,select:focus,textarea:focus{border-color:#479568}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.full{grid-column:1/-1}
+.qty{display:grid;grid-template-columns:40px 1fr 40px;gap:6px}
+.qty button{border:0;border-radius:10px;background:#edf3ef;font-size:20px}
+button{cursor:pointer;font:inherit}
+.primary,.secondary,.danger{border:0;padding:12px;border-radius:11px;font-weight:650}
+.primary{background:#26774a;color:white;width:100%}
+.secondary{background:#edf3ef;color:#285b3c}
+.danger{background:#fff0ed;color:#a33c32}
+.actions{display:flex;gap:8px;margin-top:14px}
+.actions>*{flex:1}
+.item{display:flex;gap:12px;padding:12px;margin-top:10px}
+.thumb{width:75px;height:75px;object-fit:cover;border-radius:12px;background:#edf1ee;flex-shrink:0}
+.itemcontent{flex:1;min-width:0}
+.itemtitle{font-weight:750}
+.itemmeta{font-size:12px;color:#78867d;line-height:1.6;margin-top:3px}
+.itemactions{display:flex;gap:7px;margin-top:9px}
+.itemactions button{font-size:12px;padding:7px 10px}
+.toolbar{margin:14px 0}
+.hidden{display:none!important}
+.tabs{position:fixed;bottom:0;left:0;right:0;background:#ffffffed;border-top:1px solid #e5ebe6;display:flex;justify-content:center;padding:10px;gap:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+.tabs button{width:45%;border:0;background:transparent;padding:10px;border-radius:11px;color:#718078;font-weight:650}
+.tabs button.active{background:#e8f2eb;color:#26774a}
+.empty{text-align:center;padding:28px;color:#819087;font-size:13px}
+textarea{min-height:90px}
+@media(max-width:420px){.app{padding:17px 11px 100px}.panel{padding:14px}.stat strong{font-size:21px}}
+</style>
 </head>
 <body>
-<h1>Hjemmelager</h1>
+<main class="app">
+<header>
+<div>
+<h1>Mitt lager</h1>
+<div class="subtitle">Oversikt over eiendelene dine</div>
+</div>
+<div class="logo">▦</div>
+</header>
 
-<div class="tab-buttons">
-  <button onclick="showTab('lager')">📦 Lager</button>
-  <button onclick="showTab('innstillinger')">⚙️ Hurtigvalg</button>
+<div class="stats">
+<div class="stat">
+<span>Totalt antall varer</span>
+<strong id="totalItems">0</strong>
+</div>
+<div class="stat">
+<span>Lagerverdi</span>
+<strong id="totalValue">0 kr</strong>
+</div>
 </div>
 
-<div id="lager">
-  <input id="search" placeholder="Søk i lager" />
-
-  <h3>Legg til / rediger vare</h3>
-  <input id="navn" placeholder="Navn vare" />
-  <input id="type" placeholder="Type" />
-
-  <select id="lokasjon"></select>
-  <select id="hylle"></select>
-  <select id="boks"></select>
-
-  <input id="dato" placeholder="Innkjøpsdato" />
-
-  <div class="row">
-    <button onclick="changeAntall(-1)">➖</button>
-    <input id="antall" placeholder="Antall" />
-    <button onclick="changeAntall(1)">➕</button>
-  </div>
-
-  <input id="pris" placeholder="Pris" />
-  <button onclick="addItem()">Lagre vare</button>
-
-  <h3>Lager</h3>
-  <div id="list"></div>
-
-  <hr>
-  <button onclick="backupData()">📤 Backup</button>
-  <button onclick="restoreData()">📥 Gjenopprett</button>
+<section id="lager">
+<div class="panel">
+<h2 id="formTitle">Legg til vare</h2>
+<div class="formgrid">
+<div class="field full">
+<label>Varenavn *</label>
+<input id="navn" placeholder="F.eks. Drill Makita">
+</div>
+<div class="field">
+<label>Type / kategori</label>
+<input id="type" placeholder="Verktøy">
+</div>
+<div class="field">
+<label>Innkjøpsdato</label>
+<input id="dato" type="date">
+</div>
+<div class="field">
+<label>Lokasjon</label>
+<select id="lokasjon"></select>
+</div>
+<div class="field">
+<label>Hylle</label>
+<select id="hylle"></select>
+</div>
+<div class="field">
+<label>Boks</label>
+<select id="boks"></select>
+</div>
+<div class="field">
+<label>Antall</label>
+<div class="qty">
+<button onclick="changeAntall(-1)">−</button>
+<input id="antall" type="number" min="0" value="1">
+<button onclick="changeAntall(1)">+</button>
+</div>
+</div>
+<div class="field full">
+<label>Pris per stk. (kr)</label>
+<input id="pris" type="number" min="0" step="0.01" placeholder="0">
+</div>
+<div class="field full">
+<label>Bilde av varen</label>
+<input id="bilde" type="file" accept="image/*">
+</div>
+</div>
+<div class="actions">
+<button class="primary" onclick="addItem()" id="saveButton">＋ Lagre vare</button>
+<button class="secondary hidden" id="cancelButton" onclick="clearForm()">Avbryt</button>
+</div>
 </div>
 
-<div id="innstillinger" class="hidden">
-  <h3>Hurtigvalg</h3>
-  <p class="muted">Én verdi per linje</p>
-
-  <h4>Lokasjon</h4>
-  <textarea id="lokasjonListe" rows="4"></textarea>
-
-  <h4>Hylle</h4>
-  <textarea id="hylleListe" rows="4"></textarea>
-
-  <h4>Boks</h4>
-  <textarea id="boksListe" rows="4"></textarea>
-
-  <button onclick="saveSettings()">Lagre hurtigvalg</button>
+<div class="panel">
+<h2>Lageroversikt</h2>
+<div class="toolbar">
+<input id="search" placeholder="Søk etter varer...">
 </div>
+<div id="list"></div>
+</div>
+
+<div class="panel">
+<h2>Sikkerhetskopi</h2>
+<div class="actions">
+<button class="secondary" onclick="backupData()">↑ Backup</button>
+<button class="secondary" onclick="restoreData()">↓ Gjenopprett</button>
+</div>
+<p class="muted">Ta jevnlig sikkerhetskopi av lageret.</p>
+</div>
+</section>
+
+<section id="innstillinger" class="hidden">
+<div class="panel">
+<h2>Hurtigvalg</h2>
+<p class="muted">Én verdi per linje.</p>
+<div class="field">
+<label>Lokasjon</label>
+<textarea id="lokasjonListe"></textarea>
+</div>
+<br>
+<div class="field">
+<label>Hylle</label>
+<textarea id="hylleListe"></textarea>
+</div>
+<br>
+<div class="field">
+<label>Boks</label>
+<textarea id="boksListe"></textarea>
+</div>
+<br>
+<button class="primary" onclick="saveSettings()">Lagre hurtigvalg</button>
+</div>
+</section>
+</main>
+
+<nav class="tabs">
+<button id="lagerNav" class="active" onclick="showTab('lager')">▦ Lager</button>
+<button id="settingsNav" onclick="showTab('innstillinger')">⚙ Innstillinger</button>
+</nav>
 
 <script>
-const listEl = document.getElementById('list');
-const searchEl = document.getElementById('search');
+const $=id=>document.getElementById(id);
 
-const navn = document.getElementById('navn');
-const typeInput = document.getElementById('type');
-const lokasjonSelect = document.getElementById('lokasjon');
-const hylleSelect = document.getElementById('hylle');
-const boksSelect = document.getElementById('boks');
-const dato = document.getElementById('dato');
-const antall = document.getElementById('antall');
-const pris = document.getElementById('pris');
+let items=JSON.parse(localStorage.getItem('hjemmelager_items')||'[]');
+let stored=JSON.parse(localStorage.getItem('hjemmelager_settings')||'{}');
 
-const lokasjonListe = document.getElementById('lokasjonListe');
-const hylleListe = document.getElementById('hylleListe');
-const boksListe = document.getElementById('boksListe');
-
-let editIndex = null;
-let items = JSON.parse(localStorage.getItem('hjemmelager_items') || '[]');
-
-const defaultSettings = {
-  lokasjon: ['Garasje','Container A','Container B'],
-  hylle: ['1','2','3'],
-  boks: ['A','B','C']
+let settings={
+lokasjon:Array.isArray(stored.lokasjon)?stored.lokasjon:['Garasje','Container A','Container B'],
+hylle:Array.isArray(stored.hylle)?stored.hylle:['1','2','3'],
+boks:Array.isArray(stored.boks)?stored.boks:['A','B','C']
 };
 
-let stored = JSON.parse(localStorage.getItem('hjemmelager_settings') || '{}');
-let settings = {
-  lokasjon: Array.isArray(stored.lokasjon) ? stored.lokasjon : defaultSettings.lokasjon,
-  hylle: Array.isArray(stored.hylle) ? stored.hylle : defaultSettings.hylle,
-  boks: Array.isArray(stored.boks) ? stored.boks : defaultSettings.boks
-};
+let editIndex=null;
+let currentImage='';
+
+function saveItems(){
+try{
+localStorage.setItem('hjemmelager_items',JSON.stringify(items));
+return true;
+}catch(e){
+alert('Lagringsplassen er full. Prøv et mindre bilde.');
+return false;
+}
+}
 
 function showTab(tab){
-  document.getElementById('lager').classList.add('hidden');
-  document.getElementById('innstillinger').classList.add('hidden');
-  document.getElementById(tab).classList.remove('hidden');
+$('lager').classList.toggle('hidden',tab!=='lager');
+$('innstillinger').classList.toggle('hidden',tab!=='innstillinger');
+$('lagerNav').classList.toggle('active',tab==='lager');
+$('settingsNav').classList.toggle('active',tab==='innstillinger');
 }
 
-function buildSelect(select, values, label){
-  select.innerHTML = `<option value="">Velg ${label}</option>`;
-  values.forEach(v => {
-    const o = document.createElement('option');
-    o.value = v;
-    o.textContent = v;
-    select.appendChild(o);
-  });
+function buildSelect(id,values,label,selected=''){
+const el=$(id);
+el.replaceChildren(new Option('Velg '+label,''));
+values.forEach(v=>el.add(new Option(v,v)));
+el.value=selected||'';
 }
 
-function rebuildAllSelects(){
-  buildSelect(lokasjonSelect, settings.lokasjon, 'lokasjon');
-  buildSelect(hylleSelect, settings.hylle, 'hylle');
-  buildSelect(boksSelect, settings.boks, 'boks');
+function rebuildSelects(){
+buildSelect('lokasjon',settings.lokasjon,'lokasjon');
+buildSelect('hylle',settings.hylle,'hylle');
+buildSelect('boks',settings.boks,'boks');
 }
 
 function saveSettings(){
-  settings.lokasjon = lokasjonListe.value.split('\n').map(v=>v.trim()).filter(Boolean);
-  settings.hylle = hylleListe.value.split('\n').map(v=>v.trim()).filter(Boolean);
-  settings.boks = boksListe.value.split('\n').map(v=>v.trim()).filter(Boolean);
-
-  localStorage.setItem('hjemmelager_settings', JSON.stringify(settings));
-  rebuildAllSelects();
-  alert('Hurtigvalg lagret');
-  showTab('lager');
-}
-
-function addItem(){
-  const item = {
-    navn: navn.value.trim(),
-    type: typeInput.value,
-    lokasjon: lokasjonSelect.value,
-    hylle: hylleSelect.value,
-    boks: boksSelect.value,
-    dato: dato.value,
-    antall: antall.value,
-    pris: pris.value
-  };
-
-  if(!item.navn) return alert('Navn må fylles ut');
-
-  if(editIndex !== null) items[editIndex] = item;
-  else items.push(item);
-
-  localStorage.setItem('hjemmelager_items', JSON.stringify(items));
-  render();
-  clearForm();
-}
-
-function clearForm(){
-  navn.value = '';
-  typeInput.value = '';
-  lokasjonSelect.value = '';
-  hylleSelect.value = '';
-  boksSelect.value = '';
-  dato.value = '';
-  antall.value = '';
-  pris.value = '';
-  editIndex = null;
-}
-
-function render(){
-  const q = searchEl.value.toLowerCase();
-  listEl.innerHTML = '';
-
-  items.filter(i => Object.values(i).some(v => String(v).toLowerCase().includes(q)))
-    .forEach((i,index)=>{
-      const d = document.createElement('div');
-      d.className = 'item';
-      d.innerHTML = `<b>${i.navn}</b> <span class="muted">(${i.type||'-'})</span><br>
-      <span class="muted">${i.lokasjon||'-'} – Hylle ${i.hylle||'-'}, Boks ${i.boks||'-'}</span><br>
-      Antall: ${i.antall||'-'} | Pris: ${i.pris||'-'}<br><br>
-      <button onclick="editItem(${index})">Rediger</button>
-      <button onclick="deleteItem(${index})">Slett</button>`;
-      listEl.appendChild(d);
-    });
-}
-
-function editItem(index){
-  const i = items[index];
-  navn.value = i.navn || '';
-  typeInput.value = i.type || '';
-  lokasjonSelect.value = i.lokasjon || '';
-  hylleSelect.value = i.hylle || '';
-  boksSelect.value = i.boks || '';
-  dato.value = i.dato || '';
-  antall.value = i.antall || '';
-  pris.value = i.pris || '';
-  editIndex = index;
-  showTab('lager');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function deleteItem(index){
-  if(!confirm('Slette varen?')) return;
-  items.splice(index,1);
-  localStorage.setItem('hjemmelager_items', JSON.stringify(items));
-  render();
+settings={
+lokasjon:$('lokasjonListe').value.split('\n').map(v=>v.trim()).filter(Boolean),
+hylle:$('hylleListe').value.split('\n').map(v=>v.trim()).filter(Boolean),
+boks:$('boksListe').value.split('\n').map(v=>v.trim()).filter(Boolean)
+};
+localStorage.setItem('hjemmelager_settings',JSON.stringify(settings));
+rebuildSelects();
+alert('Hurtigvalg lagret');
+showTab('lager');
 }
 
 function changeAntall(d){
-  antall.value = Math.max(0, Number(antall.value || 0) + d);
+$('antall').value=Math.max(0,Number($('antall').value||0)+d);
 }
 
-searchEl.addEventListener('input', render);
+function compressImage(file){
+return new Promise((resolve,reject)=>{
+const reader=new FileReader();
+reader.onload=e=>{
+const img=new Image();
+img.onload=()=>{
+const ratio=Math.min(1,900/img.width);
+const canvas=document.createElement('canvas');
+canvas.width=img.width*ratio;
+canvas.height=img.height*ratio;
+canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+resolve(canvas.toDataURL('image/jpeg',0.72));
+};
+img.onerror=()=>reject(new Error('Ugyldig bilde'));
+img.src=e.target.result;
+};
+reader.onerror=reject;
+reader.readAsDataURL(file);
+});
+}
+
+async function addItem(){
+const name=$('navn').value.trim();
+if(!name){alert('Navn må fylles ut');return;}
+
+let image=currentImage;
+if($('bilde').files[0]){
+try{image=await compressImage($('bilde').files[0]);}
+catch(e){alert('Kunne ikke lese bildet');return;}
+}
+
+const item={
+navn:name,
+type:$('type').value,
+lokasjon:$('lokasjon').value,
+hylle:$('hylle').value,
+boks:$('boks').value,
+dato:$('dato').value,
+antall:$('antall').value||'0',
+pris:$('pris').value||'0',
+bilde:image
+};
+
+if(editIndex!==null)items[editIndex]=item;
+else items.push(item);
+
+if(saveItems()){
+render();
+clearForm();
+}
+}
+
+function clearForm(){
+$('navn').value='';
+$('type').value='';
+$('lokasjon').value='';
+$('hylle').value='';
+$('boks').value='';
+$('dato').value='';
+$('antall').value=1;
+$('pris').value='';
+$('bilde').value='';
+editIndex=null;
+currentImage='';
+$('formTitle').textContent='Legg til vare';
+$('saveButton').textContent='＋ Lagre vare';
+$('cancelButton').classList.add('hidden');
+}
+
+function money(n){
+return (Number(n)||0).toLocaleString('nb-NO',{maximumFractionDigits:2})+' kr';
+}
+
+function render(){
+const q=$('search').value.toLowerCase();
+const filtered=items.map((item,index)=>({item,index})).filter(({item})=>
+Object.values(item).some(v=>String(v??'').toLowerCase().includes(q))
+);
+
+$('totalItems').textContent=items.reduce((s,i)=>s+(Number(i.antall)||0),0);
+$('totalValue').textContent=money(items.reduce((s,i)=>s+(Number(i.antall)||0)*(Number(i.pris)||0),0));
+
+const list=$('list');
+list.innerHTML='';
+
+if(!filtered.length){
+list.innerHTML='<div class="empty">▦<br><br>Ingen varer funnet.<br>Legg til en vare eller endre søket.</div>';
+return;
+}
+
+filtered.forEach(({item:i,index})=>{
+const card=document.createElement('div');
+card.className='item';
+
+const img=i.bilde
+?`<img class="thumb" src="${i.bilde}" alt="">`
+:'<div class="thumb" style="display:grid;place-items:center;font-size:25px">▦</div>';
+
+const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+card.innerHTML=`
+${img}
+<div class="itemcontent">
+<div class="itemtitle">${safe(i.navn)}</div>
+<div class="itemmeta">
+${safe(i.type||'Ingen kategori')}<br>
+${safe(i.lokasjon||'Ingen lokasjon')} · Hylle ${safe(i.hylle||'-')} · Boks ${safe(i.boks||'-')}
+${i.dato?'<br>Innkjøpt: '+safe(i.dato):''}
+</div>
+<div class="itemactions">
+<strong>${safe(i.antall||0)} stk.</strong>
+<button class="secondary" onclick="editItem(${index})">Rediger</button>
+<button class="danger" onclick="deleteItem(${index})">Slett</button>
+</div>
+<div class="itemmeta">${money(i.pris)} per stk.</div>
+</div>`;
+list.appendChild(card);
+});
+}
+
+function editItem(index){
+const i=items[index];
+$('navn').value=i.navn||'';
+$('type').value=i.type||'';
+rebuildSelects();
+$('lokasjon').value=i.lokasjon||'';
+$('hylle').value=i.hylle||'';
+$('boks').value=i.boks||'';
+$('dato').value=i.dato||'';
+$('antall').value=i.antall||'1';
+$('pris').value=i.pris||'';
+$('bilde').value='';
+currentImage=i.bilde||'';
+editIndex=index;
+$('formTitle').textContent='Rediger vare';
+$('saveButton').textContent='Lagre endringer';
+$('cancelButton').classList.remove('hidden');
+showTab('lager');
+window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function deleteItem(index){
+if(!confirm('Slette varen?'))return;
+items.splice(index,1);
+if(saveItems())render();
+}
 
 function backupData(){
-  const data = { items, settings, version:1, date:new Date().toISOString() };
-  const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
-  const file = new File([blob], 'hjemmelager-backup.json', {type:'application/json'});
-
-  if(navigator.canShare && navigator.canShare({files:[file]})){
-    navigator.share({ files:[file], title:'Hjemmelager backup' });
-  } else {
-    alert('Deling støttes ikke på denne enheten');
-  }
+const data={items,settings};
+const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+const url=URL.createObjectURL(blob);
+const a=document.createElement('a');
+a.href=url;
+a.download='hjemmelager-backup-'+new Date().toISOString().slice(0,10)+'.json';
+a.click();
+URL.revokeObjectURL(url);
 }
 
 function restoreData(){
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'application/json';
-
-  input.onchange = e => {
-    const file = e.target.files[0];
-    if(!file) return;
-
-    const reader = new FileReader();
-    reader.onload = evt => {
-      try{
-        const data = JSON.parse(evt.target.result);
-        if(!data.items || !data.settings) return alert('Ugyldig backup-fil');
-        if(!confirm('Dette vil overskrive eksisterende lager. Fortsette?')) return;
-
-        items = data.items;
-        settings = data.settings;
-        localStorage.setItem('hjemmelager_items', JSON.stringify(items));
-        localStorage.setItem('hjemmelager_settings', JSON.stringify(settings));
-        rebuildAllSelects();
-        render();
-        alert('Gjenoppretting fullført');
-      } catch {
-        alert('Kunne ikke lese backup-fil');
-      }
-    };
-    reader.readAsText(file);
-  };
-  input.click();
+const input=document.createElement('input');
+input.type='file';
+input.accept='.json,application/json';
+input.onchange=e=>{
+const file=e.target.files[0];
+if(!file)return;
+const reader=new FileReader();
+reader.onload=evt=>{
+try{
+const data=JSON.parse(evt.target.result);
+if(!Array.isArray(data.items)||!data.settings||
+!Array.isArray(data.settings.lokasjon)||
+!Array.isArray(data.settings.hylle)||
+!Array.isArray(data.settings.boks)){
+alert('Ugyldig backup-fil');return;
+}
+if(!confirm('Dette overskriver lageret ditt. Fortsette?'))return;
+items=data.items;
+settings=data.settings;
+localStorage.setItem('hjemmelager_settings',JSON.stringify(settings));
+if(saveItems()){
+rebuildSelects();
+render();
+alert('Gjenoppretting fullført');
+}
+}catch(e){alert('Kunne ikke lese backup-filen');}
+};
+reader.readAsText(file);
+};
+input.click();
 }
 
+$('search').addEventListener('input',render);
+
 function init(){
-  lokasjonListe.value = settings.lokasjon.join('\n');
-  hylleListe.value = settings.hylle.join('\n');
-  boksListe.value = settings.boks.join('\n');
-  rebuildAllSelects();
-  render();
+$('lokasjonListe').value=settings.lokasjon.join('\n');
+$('hylleListe').value=settings.hylle.join('\n');
+$('boksListe').value=settings.boks.join('\n');
+$('antall').value=1;
+rebuildSelects();
+render();
 }
 
 init();
 </script>
 </body>
 </html>
+
